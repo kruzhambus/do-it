@@ -108,4 +108,24 @@ a.nuxt-link-exact-active {
         font-size: 17px;
     }
 }
+.container {
+    padding: 10px;
+}
+@media screen and (max-width: 1440px) {
+    .container {
+        margin-left: 120px;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .container {
+        margin-left: 65px;
+    }
+}
+@media screen and (max-width: 850px) {
+    .container {
+        margin-left: 0;
+    }
+}
+
 </style>

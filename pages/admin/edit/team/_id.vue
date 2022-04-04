@@ -2,7 +2,7 @@
     <div>
         <div class="container">
              <div class="block">
-                <span>New/Edit Player</span>
+                <span>New/Edit Team</span>
             </div>
         </div>
         <div class="block__edit">
@@ -15,7 +15,7 @@
                 <div v-if="basicInfo">
                     <div class="block__edit-date">
                         <div>
-                            <label for="name">Name</label>
+                            <label for="name">Team name</label>
                             <input type="text" id="name" v-model="name">
                         </div>
                     </div>
@@ -27,24 +27,29 @@
                     </div>
                     <div class="block__edit-date">
                         <div>
-                            <label for="SEX">SEX</label>
-                             <select name="SEX" id="SEX" v-model="sex">
-                                <option value="" selected disabled>Select SEX*</option>
-                                <option value="male">male</option>
-                                <option value="famele">famele</option>
+                            <label for="Main Game">Main Game</label>
+                             <select name="Main Game" id="Main Game" v-model="mainGame">
+                                <option value="" selected disabled>Select Main Game*</option>
+                                <option value="male">Main Game</option>
+                                <option value="famele">Main Game</option>
                             </select>
                         </div>
                     </div>
                     <div class="block__edit-date">
                         <div>
-                            <label for="Age">Age</label>
-                            <input type="text" id="Age" v-model="age">
+                            <label for="teamLeader">Team Leader</label>
+                            <select name="teamLeader" id="teamLeader" v-model="teamLeader">
+                                <option value="" selected disabled>Select Team Leader*</option>
+                                <option v-for="items in this.getAllUsers" :value="{id: items.id, name: items.username}" :key="items.id">{{ items.username }}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="block__edit-date">
                         <div>
-                            <label for="Nationality">Nationality</label>
-                            <input type="text" id="Nationality" v-model="nationality">
+                            <label for="Country">Country</label>
+                            <UI-dropdown class="secondary" :title="country || 'Choose a country'"
+                            @updateSelect="updateCountry"
+                            :items="countryList"/>
                         </div>
                     </div>
                     <div class="block__edit-date">
@@ -58,11 +63,39 @@
                             <label for="URL">URL</label>
                             <div class="forInput">
                                 <div class="doit">
-                                    <span>Doit.gg/user</span>
+                                    <span>Doit.gg/team</span>
                                 </div>
                                 <input type="text" id="URL" v-model="urlId" disabled>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="block__edit-items">
+                <div class="block__edit-title">
+                    <p>Players</p>
+                    <span @click="players = false" v-if="players">—</span>
+                    <span @click="players = true" v-else>+</span>
+                </div>
+                <div v-if="players">
+                    <div class="block__edit-date">
+                        <div class="players">
+                            <div class="players-btn">List of players</div>
+                            <div class="players-btn" @click="editList = !editList">Edit list of players</div>
+                        </div>
+                        <table>
+                            <thead>
+                                <th>id</th>
+                                <th>nickname</th>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in this.players" :key="item.id">
+                                    <td>{{ item.id }}</td>
+                                    <td>{{ item.name }}</td>
+                                    <td v-if="editList" class="delete" @click="deletePlayer">x</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -83,7 +116,7 @@
             </div>
         </div>
         <div class="player-edit__form-btns">
-            <div @click="deleteUser">
+            <div @click="deleteTeams">
                 <UI-button class="player-edit__form-btn secondary" type="button">Delete user</UI-button>
             </div>
             <div @click="save">
@@ -95,76 +128,94 @@
 
 <script>
 import { mapGetters } from "vuex"
-
+import { getNames } from "country-list"
 export default {
-    name: 'playerId',
+    name: 'teamId',
     data () {
         return {
             basicInfo: false,
             advance: false,
+            players: false,
+            editList: false,
             id: Number(this.$route.params.id),
             avatarImg: '',
-            age: null,
+            country: null,
             name: null,
-            sex: null,
-            nationality: null,
+            mainGame: null,
+            players: [],
+            teamLeader: null,
             webSite: null,
-            urlId: null
+            urlId: null,
+            countryList: null,
+            date: new Date().toLocaleDateString()
         }
     },
     computed: {
         ...mapGetters(['getAllUsers'])
     },
     async mounted () {
+        this.countryList = getNames()
         if (this.getAllUsers) {
             await this.$store.dispatch("userAction", this.$fire.auth.currentUser.uid)
         }
+        setTimeout(() => {
+            this.urlId = this.id
+        }, 500)
     },
     methods: {
         uploadAvatarImg (e) {
             this.avatarImg = e
         },
-        deleteUser() {
-            this.$store.dispatch('setPlayerDataAction', {
+        updateCountry (e) {
+            this.country = e
+        },
+        deleteTeams() {
+            this.$store.dispatch('setTeamAction', {
               id: this.id,
               delete: true
             })
             this.$router.push({
-              path: '/admin/players',
+              path: '/admin/teams',
               query: {
-                  edit: true
+                edit: true
               }
             })
-            this.$toast.success('User have been deleted')
+            this.$toast.success('Team have been changed')
+        },
+        deletePlayer(id) {
+            if(Object.keys(this.players).length === 1) {
+              return this.$toast.error('There must be at least 1 player')
+            }
+            delete this.players[id]
+            this.$toast.success('Success')
         },
         async save() {
-            if(!this.name && !this.username && !this.sex && !this.country && !this.date && !this.img) {
+            if(!this.name && !this.mainGame && !this.teamLeader && !this.country && !this.webSite && !this.avatarImg) {
                 return this.$toast.error('All fields are required!')
             }
-            this.$store.dispatch('setPlayerDataAction', {
+            this.$store.dispatch('setTeamAction', {
                 id: this.id,
-                username: this.name,
-                sex: this.sex,
+                name: this.name,
+                game: this.mainGame,
+                leader: this.teamLeader,
                 country: this.country,
-                date: this.nationality,
-                age: this.age,
-                website: this.website,
+                date: this.date,
+                website: this.webSite,
                 img: this.avatarImg,
             })
             this.$router.push({
-                path: '/admin/players',
-                query: {
-                  edit: true
-                }
+              path: '/admin/teams',
+              query: {
+                edit: true
+              }
             })
-            this.$toast.success('Player have been changed')
+            this.$toast.success('Team have been changed')
         },
     },
     watch: {
         getAllUsers (value) {
             if (this.getAllUsers[this.id]) {
                 this.avatarImg = this.getAllUsers[this.id].img
-                this.urlId = this.id
                 this.age = this.getAllUsers[this.id].age
                 this.name = this.getAllUsers[this.id].name
                 this.nationality = this.getAllUsers[this.id].country
@@ -179,6 +230,46 @@ export default {
 <style lang="scss" scoped>
 * {
     color: #D8DFEB;
+}
+.delete {
+    cursor: pointer;
+}
+table {
+    margin-top: 10px;
+    th, td {
+        padding: 10px;
+        font-family: 'Rubik';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 100%;
+        /* identical to box height, or 16px */
+
+
+        color: #CCCDCD;
+    }
+}
+
+.players {
+    display: flex;
+    align-items: center;
+    &-btn {
+      color: #0A61E1;
+      font-weight: 700;
+      padding: 12px 16px;
+      background-color: #1A222D;
+      cursor: pointer;
+      max-width: 150px;
+      font-family: 'Rubik';
+      margin-right: 15px;
+font-style: normal;
+font-weight: 700;
+font-size: 16px;
+line-height: 100%;
+/* identical to box height, or 16px */
+
+text-align: center;
+    }
 }
 .player-edit__form {
     color: #CCCDCD;

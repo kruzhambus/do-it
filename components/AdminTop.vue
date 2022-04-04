@@ -102,10 +102,14 @@ export default {
 .navbar {
     display: flex;
     align-items: center;
+    
+    flex-wrap: wrap;
     justify-content: space-between;
     margin-bottom: 30px;
 
     &__items {
+        
+        margin-top: 15px;
         display: flex;
         align-items: center;
 

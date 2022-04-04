@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  name: 'dropdown',
   props: ['title', 'items', 'index'],
   data() {
     return {
@@ -41,6 +42,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+ul {
+  padding: 0;
+  list-style: none;
+}
+li {
+  list-style: none;
+}
   .select {
     position: relative;
     &__title {

@@ -1,29 +1,11 @@
 <template>
     <div>
-        <AdminTop label ="player" :editor="edit" @edit="editChange" @cancel="cancel" @save="save" />
+        <AdminTop label ="team" :editor="edit" @edit="editChange" @cancel="cancel" @save="save" />
         <div>
             <table class="container">
             	<thead>
             		<tr>
             			<th>
-                            <div class="d-flex">
-                                Nickname
-                                <img src="/ui/sort.svg" alt="">
-                            </div>
-                        </th>
-                        <th>
-                            <div class="d-flex">
-                                Password
-                                <img src="/ui/sort.svg" alt="">
-                            </div>
-                        </th>
-                        <th>
-                            <div class="d-flex">
-                                Country
-                                <img src="/ui/sort.svg" alt="">
-                            </div>
-                        </th>
-                        <th>
                             <div class="d-flex">
                                 Team
                                 <img src="/ui/sort.svg" alt="">
@@ -31,41 +13,31 @@
                         </th>
                         <th>
                             <div class="d-flex">
-                                Name
+                                Leader
                                 <img src="/ui/sort.svg" alt="">
                             </div>
                         </th>
                         <th>
                             <div class="d-flex">
-                                Created
+                                Main Game
                                 <img src="/ui/sort.svg" alt="">
                             </div>
                         </th>
                         <th>
                             <div class="d-flex">
-                                Age
-                                <img src="/ui/sort.svg" alt="">
-                            </div>
-                        </th>
-                        <th>
-                            <div class="d-flex">
-                                rank
+                                Creation Date
                                 <img src="/ui/sort.svg" alt="">
                             </div>
                         </th>
             		</tr>
             	</thead>
             	<tbody>
-            		<tr v-for="item in this.getAllUsers" :key="item.uid">
-            			<td>{{ item.username }}</td>
-            			<td v-if="item.password">{{ item.password.replace(/[^\s]/g, "*") }}</td>
-            			<td v-if="item.country">{{ item.country.substr(0, 14) }}</td>
-                        <td>team</td>
-            			<td>{{ item.name  }}</td>
-                        <td>{{ new Date(item.dateRegistration).toLocaleDateString()  }}</td>
-                        <td>{{ item.age  }}</td>
-                        <td>{{ item.rank  }}</td>
-                        <td v-if="edit"><nuxt-link :to="`/admin/edit/player/${ item.id }`">edit</nuxt-link></td>
+            		<tr v-for="item in this.getTeams" :key="item.uid">
+            			<td>{{ item.name }}</td>
+            			<td>{{ item.leader.name }}</td>
+            			<td>{{ item.game }}</td>
+                        <td>{{ item.creationDate  }}</td>
+                        <td v-if="edit"><nuxt-link :to="`/admin/edit/team/${ item.id }`">edit</nuxt-link></td>
             		</tr>
             	</tbody>
             </table>
@@ -73,14 +45,15 @@
     </div>
 </template>
 
-<script>import { mapGetters } from "vuex";
+<script>
+import { mapGetters } from "vuex";
 
 
 export default {
-    computed: { ...mapGetters(['getAllUsers', 'getTeams']) },
+    computed: { ...mapGetters(['getTeams']) },
     async mounted () {
-        if (!this.getAllUsers) {
-            await this.$store.dispatch("userAction", this.$fire.auth.currentUser.uid)
+        if (!this.getTeams) {
+            await this.$store.dispatch('setTeamsAction')
         }
     },
     data () {
@@ -95,6 +68,7 @@ export default {
         },
         cancel () {
             this.$store.dispatch('setTeamsAction')
+            this.$toast.success('Cancel')
         },
         async save() {
             try {
