@@ -1,3 +1,4 @@
+
 <template>
     <div class="navbar">
         <div class="navbar__items">
@@ -30,6 +31,7 @@
     </div>
 </template>
 
+
 <script>
 export default {
     layout: "empty",
@@ -58,6 +60,7 @@ export default {
     }
 }
 </script>
+
 
 <style lang="scss" scoped>
 
