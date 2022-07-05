@@ -1,7 +1,7 @@
 <template>
   <div class="auth-layout">
     <img class="auth-layout__back" src="/ui/back.svg" alt="" @click="$router.go(-1)">
-    <nuxt-link to="/"><img class="auth-layout__exit" src="/ui/exit.svg" alt=""></nuxt-link>
+    <nuxt-link to="/"><img class="auth-layout__exit" src="/ui/exit.svg" alt=" "></nuxt-link>
     <Nuxt />
   </div>
 </template>
