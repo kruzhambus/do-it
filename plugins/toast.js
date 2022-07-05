@@ -7,7 +7,7 @@ const options = {
   transition: 'Vue-Toastification__fade',
   maxToasts: 2,
   newestOnTop: true,
-  timeout: 2000
+  timeout: 2500
 }
 
 Vue.use(Toast, options)
