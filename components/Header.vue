@@ -26,7 +26,7 @@
                     <button class="button btn-2">Login</button>
                 </nuxt-link>
                 <nuxt-link to="/auth/register"> 
-                  <button class="button">Sing up</button>
+                  <button class="button btn-2">Sing up</button>
                 </nuxt-link>
             </div>
             <div
