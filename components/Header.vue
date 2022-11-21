@@ -23,10 +23,10 @@
           </ul>
             <div class="button-block" v-if="!$fire.auth.currentUser">
                 <nuxt-link to="/auth/Login">
-                    <button class="button">Login</button>
+                    <button class="button btn-2">Login</button>
                 </nuxt-link>
-                <nuxt-link to="/auth/register">
-                    <button class="button">Sing up</button>
+                <nuxt-link to="/auth/register"> 
+                  <button class="button">Sing up</button>
                 </nuxt-link>
             </div>
             <div
