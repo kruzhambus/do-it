@@ -5,9 +5,9 @@ import 'vue-toastification/dist/index.css'
 const options = {
   position: POSITION.TOP_RIGHT,
   transition: 'Vue-Toastification__fade',
-  maxToasts: 2,
+  maxToasts: 3,
   newestOnTop: true,
-  timeout: 2500
+  timeout: 3500
 }
 
 Vue.use(Toast, options)
